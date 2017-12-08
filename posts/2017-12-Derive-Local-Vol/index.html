@@ -195,11 +195,12 @@ setTimeout(function() {mnist_tooltip.hide();}, 3000);
 <h2>Derive Dupire Local Vol PDE</h2>
 Dupire local volatility SDE is defined as:
 $$\mathrm{d}S_t = (r_d(t)-r_f(t))S_t\mathrm{d}t + \sigma(t,S_t)\mathrm{d}W_t$$
+<div class="w3-container w3-gray">
 <b>Definition (Fokker-Planck Equitation)</b> <i>For a SDE</i>
 $$\mathrm{d}X_t = \mu(X_t,t)\mathrm{d}t + \sigma(X_t,t)\mathrm{d}W_t$$
 <i>with drift \(\mu(X_t,t)\) and diffusion \(D(X_t,t)=\sigma^2(X_t,t)/2\), the Fokker-Planck equation for the probability density p(x,t) of random variable \(X_t\) is</i>
-
-
+$$\frac{\partial}{\partial t}p(x,t) = -\frac{\partial}{\partial x}[\mu(x,t)p(x,t)]+\frac{\partial^2}{\partial x^2}[D(x,t)p(x,t)].$$
+</div>
 
                            
                          
