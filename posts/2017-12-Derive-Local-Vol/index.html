@@ -192,6 +192,25 @@ setTimeout(function() {mnist_tooltip.hide();}, 3000);
 </script>
 
 <p>1. Dupire local volatility SDE is defined as:</p>
+Let's see how Mathjax really looks like $x^2$ in this website:
+$$x = {-b \pm \sqrt{b^2-4ac} \over 2a}.$$
+$$ \begin{array}{rcll}
+y & = & x^{2}+bx+c\\
+  & = & x^{2}+2\times\dfrac{b}{2}x+c\\
+  & = & \underbrace{x^{2}+2\times\dfrac{b}{2}x+\left(\frac{b}{2}\right)^{2}}-
+      {\left(\dfrac{b}{2}\right)^{2}+c}\\
+  &  & \qquad\left(x+{\dfrac{b}{2}}\right)^{2}\\
+  & = & \left(x+\dfrac{b}{2}\right)^{2}-\left(\dfrac{b}{2}\right)^{2}+c 
+  & \left|+\left({\dfrac{b}{2}}\right)^{2}-c\right.\\
+    y+\left(\dfrac{b}{2}\right)^{2}-c & = & \left(x+
+    \dfrac{b}{2}\right)^{2} & \left|\strut(\textrm{vertex form})\right.\\
+y-y_{S} & = & (x-x_{S})^{2}\\
+S(x_{S};y_{S}) & \,\textrm{or}\, 
+    & S\left(-\dfrac{b}{2};\,\left(\dfrac{b}{2}\right)^{2}-c\right)
+\end{array} $$
+Now we go to another paragraphs.
+                            
+                         
 <p>$$\mathrm{d}S_t = (r_d(t)-r_f(t))S_t\mathrm{d}t + \sigma(t,S_t)\mathrm{d}W_t$$</p>
 <p>It isn’t a matter of things being too complicated. Almost everything we do is fundamentally very simple. Unfortunately, an innate human handicap interferes with us understanding these simple things.</p>
 <p>Humans evolved to reason fluidly about two and three dimensions. With some effort, we may think in four dimensions. Machine learning often demands we work with thousands of dimensions – or tens of thousands, or millions! Even very simple things become hard to understand when you do them in very high numbers of dimensions.</p>
