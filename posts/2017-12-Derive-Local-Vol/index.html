@@ -191,7 +191,6 @@ mnist_tooltip.img_display.imgs(mnist_xs);
 setTimeout(function() {mnist_tooltip.hide();}, 3000);
 </script>
 
-<<<<<<< HEAD
 <h2>Derive Dupire Local Vol PDE</h2>
 Dupire local volatility SDE is defined as:
 $$\mathrm{d}S_t = (r_d(t)-r_f(t))S_t\mathrm{d}t + \sigma(t,S_t)\mathrm{d}W_t$$
@@ -201,11 +200,18 @@ $$\mathrm{d}X_t = \mu(X_t,t)\mathrm{d}t + \sigma(X_t,t)\mathrm{d}W_t$$
 <i>with drift \(\mu(X_t,t)\) and diffusion \(D(X_t,t)=\sigma^2(X_t,t)/2\), the Fokker-Planck equation for the probability density p(x,t) of random variable \(X_t\) is</i>
 $$\frac{\partial}{\partial t}p(x,t) = -\frac{\partial}{\partial x}[\mu(x,t)p(x,t)]+\frac{\partial^2}{\partial x^2}[D(x,t)p(x,t)].$$
 </div>
+So we get the Fokker-Planck equation of spot price \(S_t\) process as following (we define \(\mu(t)=r_d(t)-r_f(t)\)):
+$$\frac{\partial}{\partial t}p(S_t,t) = -\frac{\partial}{\partial x}\left[\mu(t)\cdot S_t\cdot p(S_t,t)\right]+\frac{\partial^2}{\partial x^2}\left[\frac{1}{2}\sigma^2(S_t,t)\cdot S^2_t\cdot p(x,t)\right].$$
+From option price definition derive its derivatives.
+Assume
 
-                           
-                         
-<p>$$\mathrm{d}S_t = (r_d(t)-r_f(t))S_t\mathrm{d}t + \sigma(t,S_t)\mathrm{d}W_t$$</p>
->>>>>>> origin/master
+
+
+
+
+
+
+
 <p>It isn’t a matter of things being too complicated. Almost everything we do is fundamentally very simple. Unfortunately, an innate human handicap interferes with us understanding these simple things.</p>
 <p>Humans evolved to reason fluidly about two and three dimensions. With some effort, we may think in four dimensions. Machine learning often demands we work with thousands of dimensions – or tens of thousands, or millions! Even very simple things become hard to understand when you do them in very high numbers of dimensions.</p>
 <p>Reasoning directly about these high dimensional spaces is just short of hopeless.</p>
