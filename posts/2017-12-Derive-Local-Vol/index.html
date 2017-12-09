@@ -202,7 +202,19 @@ $$\frac{\partial}{\partial t}p(x,t) = -\frac{\partial}{\partial x}[\mu(x,t)p(x,t
 So we get the Fokker-Planck equation of spot price \(S_t\) process as following (we define \(\mu(t)=r_d(t)-r_f(t)\)):
 $$\frac{\partial}{\partial t}p(S_t,t) = -\frac{\partial}{\partial x}\left[\mu(t)\cdot S_t\cdot p(S_t,t)\right]+\frac{\partial^2}{\partial x^2}\left[\frac{1}{2}\sigma^2(S_t,t)\cdot S^2_t\cdot p(x,t)\right].$$
 From option price definition derive its derivatives.
-Assume \[C(T,K)\] is the Call option price at time \[t\], and define \[DF(r_d(T))=\]
+Assume \(C(T,K)\) is the Call option price at time \(t\), and define \(DF(r_d(T))=\int_t^T e^{-r_d(u)}\mathrm{d}u\), the Call option price is evaluated as the discounted expectation of the option payoff at maturity:
+$$C(K,T)=DF(r_d(T)) \int_0^\infty Max(S_T-K)p(S_T,T)\mathrm{d}S_T.$$
+The first and second order derivatives of option price against strike are:
+$$\frac{\partial C(K,T)}{\partial K}=-DF(r_d(T)) \int_K^\infty p(S_T,T)\mathrm{d}S_T,$$
+$$\frac{\partial^2 C(K,T)}{\partial K^2}=DF(r_d(T)) \cdot p(K,T),$$
+so the PDE of local vol becomes
+\[\begin{split}
+\frac{\partial C(K,T)}{\partial T}=&-r_d(T)C(K,T)+DF(r_d(T)) \int_0^\infty Max(S_T-K) \frac{\partial p(S_T,T)}{\partial T}\mathrm{d}S_T \\
+=&-r_d(T)C(K,T)+DF(r_d(T)) \int_K^\infty (S_T-K) \\
+&\left\{-\frac{\partial[\mu(T) S_T\cdot p(S_T,T)]}{\partial S_T}+\frac{\partial^2 [0.5\sigma^2(S_T,T)\cdot S^2_T\cdot p(S_T,T)]}{\partial S^2_T}\right\}\mathrm{d}S_T \\
+\end{split}\]
+In order to simplify the above PDE, let's calculate two integrals first.
+
 
 
 
