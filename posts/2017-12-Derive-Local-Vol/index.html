@@ -4,7 +4,7 @@
     
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-        <title>Derive Local Volatility - Yechang's blog</title>
+        <title>Derive Dupire Local Volatility PDE - Yechang's blog</title>
         
         <link rel="stylesheet" href="../../fonts/Serif/cmun-serif.css" />
         <link rel="stylesheet" href="../../fonts/Serif-Slanted/cmun-serif-slanted.css" />
@@ -84,7 +84,7 @@
                 <div class="container">
                     <div class="row">
                         <div class="col-md-8">
-                            <h1>Derive Local Volatility</h1>
+                            <h1>Derive Dupire Local Volatility PDE</h1>
                             <div id="body">
                                 <div class="info">
     <p style="font-family:CMSS; font-size:130%">Posted on December  8, 2017</p>
@@ -191,7 +191,7 @@ mnist_tooltip.img_display.imgs(mnist_xs);
 setTimeout(function() {mnist_tooltip.hide();}, 3000);
 </script>
 
-<h2>Derive Dupire Local Vol PDE</h2>
+
 1. Dupire local volatility SDE is defined as:
 $$\mathrm{d}S_t = (r_d(t)-r_f(t))S_t\mathrm{d}t + \sigma(t,S_t)\mathrm{d}W_t$$
 <b>Definition (Fokker-Planck Equitation)</b> <i>For a SDE</i>
@@ -243,7 +243,7 @@ I_2 &= 0.5(S_T-K)\frac{\partial}{\partial S}\left[\sigma^2(S_T,T) S^2_T p(S_T,T)
 <br>
 4. Put back the two integrals into the PDE of call option, we will get the PDE of Dupire Local Volatility:
 $$\begin{split}
-\frac{\partial C(K,T)}{\partial T}= -r_f(T)C(K,T) - \[r_d(T)-r_f(T)\]K\frac{\partial C(K,T)}{\partial K} + \frac{1}{2}\sigma^2(K,T)K^2\frac{\partial^2 C}{\partial K^2}.
+\frac{\partial C(K,T)}{\partial T}= -r_f(T)C(K,T) - \left[r_d(T)-r_f(T)\right]K\frac{\partial C(K,T)}{\partial K} + \frac{1}{2}\sigma^2(K,T)K^2\frac{\partial^2 C}{\partial K^2}.
 \end{split}$$
 
 
