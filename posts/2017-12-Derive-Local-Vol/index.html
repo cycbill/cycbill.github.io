@@ -192,7 +192,7 @@ setTimeout(function() {mnist_tooltip.hide();}, 3000);
 </script>
 
 <h2>Derive Dupire Local Vol PDE</h2>
-Dupire local volatility SDE is defined as:
+1. Dupire local volatility SDE is defined as:
 $$\mathrm{d}S_t = (r_d(t)-r_f(t))S_t\mathrm{d}t + \sigma(t,S_t)\mathrm{d}W_t$$
 <b>Definition (Fokker-Planck Equitation)</b> <i>For a SDE</i>
 $$\mathrm{d}X_t = \mu(X_t,t)\mathrm{d}t + \sigma(X_t,t)\mathrm{d}W_t$$
@@ -201,7 +201,7 @@ $$\frac{\partial}{\partial t}p(x,t) = -\frac{\partial}{\partial x}[\mu(x,t)p(x,t
 </div>
 So we get the Fokker-Planck equation of spot price \(S_t\) process as following (we define \(\mu(t)=r_d(t)-r_f(t)\)):
 $$\frac{\partial}{\partial t}p(S_t,t) = -\frac{\partial}{\partial x}\left[\mu(t)\cdot S_t\cdot p(S_t,t)\right]+\frac{\partial^2}{\partial x^2}\left[\frac{1}{2}\sigma^2(S_t,t)\cdot S^2_t\cdot p(x,t)\right].$$
-From option price definition derive its derivatives.
+2. From option price definition derive its derivatives. 
 Assume \(C(T,K)\) is the Call option price at time \(t\), and define \(DF(r_d(T))=\int_t^T e^{-r_d(u)}\mathrm{d}u\), the Call option price is evaluated as the discounted expectation of the option payoff at maturity:
 $$C(K,T)=DF(r_d(T)) \int_0^\infty Max(S_T-K)p(S_T,T)\mathrm{d}S_T.$$
 The first and second order derivatives of option price against strike are:
@@ -213,7 +213,7 @@ so the PDE of local vol becomes
 =&-r_d(T)C(K,T)+DF(r_d(T)) \int_K^\infty (S_T-K) \\
 &\left\{-\frac{\partial[\mu(T) S_T\cdot p(S_T,T)]}{\partial S_T}+\frac{\partial^2 [0.5\sigma^2(S_T,T)\cdot S^2_T\cdot p(S_T,T)]}{\partial S^2_T}\right\}\mathrm{d}S_T \\
 \end{split}\]
-In order to simplify the above PDE, let's calculate two following integrals first.
+3. Two useful integrals\par. In order to simplify the above PDE, let's calculate two following integrals first.
 $$I_1 = -\mu(T) \int_K^\infty (S_T-K)\left\{\frac{\partial[S_T\cdot p(S_T,T)]}{\partial S_T}\right\}\mathrm{d}S_T$$
 $$I_2 = \int_K^\infty (S_T-K)\left\{\frac{\partial^2 [0.5\sigma^2(S_T,T)\cdot S^2_T\cdot p(S_T,T)]}{\partial S^2_T}\right\}\mathrm{d}S_T$$
 For \(I_1\), because
@@ -231,9 +231,20 @@ I_1 &= \mu(T)(S_T-K)S_T p(S_T,T)\Big|^{\infty}_{K}-\mu(T)\int_K^\infty S_Tp(S_T,
     &=-\frac{\mu(T)C(K,T)}{DF(r_d(T))} + \frac{\mu(T)K}{DF(r_d(T))}\frac{\partial C(K,T)}{\partial K}.
 \end{split}$$
 For \(I_2\), because
+$$p(K,T)=\frac{1}{DF(r_d(T))}\frac{\partial^2 C}{\partial K^2},$$
+so using integral by parts with \(u=S_T-K\), \(u'=1\), \(v'=\frac{\partial^2}{\partial S^2}[\sigma^2(S_T,T) S^2_T p(S_T,T)]\), \(v=\frac{\partial}{\partial S}[\sigma^2(S_T,T) S^2_T p(S_T,T)]\), we can get
+$$\begin{split}
+I_2 &= 0.5(S_T-K)\frac{\partial}{\partial S}\left[\sigma^2(S_T,T) S^2_T p(S_T,T)\right]\Big|^{\infty}_{K} - 0.5\int_K^\infty \frac{\partial}{\partial S}\left[\sigma^2(S_T,T) S^2_T p(S_T,T)\right] \mathrm{d}S_T \\
+    &= 0 - 0 - 0.5\sigma^2(S_T,T) S^2_T p(S_T,T)\Big|^\infty_K\\
+    &= \frac{0.5\sigma^2(K,T)K^2}{DF(r_d(T))}\frac{\partial^2 C}{\partial K^2}.
+\end{split}$$
+5. Put back the two integrals into the PDE of call option, we will get the PDE of Dupire Local Volatility:
+$$\begin{split}
+\frac{\partial C(K,T)}{\partial T}= -r_f(T)C(K,T) - [r_d(T)-r_f(T)]K\frac{\partial C(K,T)}{\partial K} + \frac{1}{2}\sigma^2(K,T)K^2\frac{\partial^2 C}{\partial K^2}.
+\end{split}$$
 
 
-
+<br>
 
 
 <p>It isn’t a matter of things being too complicated. Almost everything we do is fundamentally very simple. Unfortunately, an innate human handicap interferes with us understanding these simple things.</p>
