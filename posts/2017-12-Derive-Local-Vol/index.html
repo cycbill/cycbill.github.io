@@ -201,6 +201,7 @@ $$\frac{\partial}{\partial t}p(x,t) = -\frac{\partial}{\partial x}[\mu(x,t)p(x,t
 </div>
 So we get the Fokker-Planck equation of spot price \(S_t\) process as following (we define \(\mu(t)=r_d(t)-r_f(t)\)):
 $$\frac{\partial}{\partial t}p(S_t,t) = -\frac{\partial}{\partial x}\left[\mu(t)\cdot S_t\cdot p(S_t,t)\right]+\frac{\partial^2}{\partial x^2}\left[\frac{1}{2}\sigma^2(S_t,t)\cdot S^2_t\cdot p(x,t)\right].$$
+<br>
 2. From option price definition derive its derivatives. 
 Assume \(C(T,K)\) is the Call option price at time \(t\), and define \(DF(r_d(T))=\int_t^T e^{-r_d(u)}\mathrm{d}u\), the Call option price is evaluated as the discounted expectation of the option payoff at maturity:
 $$C(K,T)=DF(r_d(T)) \int_0^\infty Max(S_T-K)p(S_T,T)\mathrm{d}S_T.$$
@@ -213,7 +214,8 @@ so the PDE of local vol becomes
 =&-r_d(T)C(K,T)+DF(r_d(T)) \int_K^\infty (S_T-K) \\
 &\left\{-\frac{\partial[\mu(T) S_T\cdot p(S_T,T)]}{\partial S_T}+\frac{\partial^2 [0.5\sigma^2(S_T,T)\cdot S^2_T\cdot p(S_T,T)]}{\partial S^2_T}\right\}\mathrm{d}S_T \\
 \end{split}\]
-3. Two useful integrals\par. In order to simplify the above PDE, let's calculate two following integrals first.
+<br>
+3. Two useful integrals. In order to simplify the above PDE, let's calculate two following integrals first.
 $$I_1 = -\mu(T) \int_K^\infty (S_T-K)\left\{\frac{\partial[S_T\cdot p(S_T,T)]}{\partial S_T}\right\}\mathrm{d}S_T$$
 $$I_2 = \int_K^\infty (S_T-K)\left\{\frac{\partial^2 [0.5\sigma^2(S_T,T)\cdot S^2_T\cdot p(S_T,T)]}{\partial S^2_T}\right\}\mathrm{d}S_T$$
 For \(I_1\), because
@@ -238,7 +240,8 @@ I_2 &= 0.5(S_T-K)\frac{\partial}{\partial S}\left[\sigma^2(S_T,T) S^2_T p(S_T,T)
     &= 0 - 0 - 0.5\sigma^2(S_T,T) S^2_T p(S_T,T)\Big|^\infty_K\\
     &= \frac{0.5\sigma^2(K,T)K^2}{DF(r_d(T))}\frac{\partial^2 C}{\partial K^2}.
 \end{split}$$
-5. Put back the two integrals into the PDE of call option, we will get the PDE of Dupire Local Volatility:
+<br>
+4. Put back the two integrals into the PDE of call option, we will get the PDE of Dupire Local Volatility:
 $$\begin{split}
 \frac{\partial C(K,T)}{\partial T}= -r_f(T)C(K,T) - [r_d(T)-r_f(T)]K\frac{\partial C(K,T)}{\partial K} + \frac{1}{2}\sigma^2(K,T)K^2\frac{\partial^2 C}{\partial K^2}.
 \end{split}$$
