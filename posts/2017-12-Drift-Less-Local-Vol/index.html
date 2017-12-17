@@ -194,8 +194,22 @@ setTimeout(function() {mnist_tooltip.hide();}, 3000);
 
 In the last post, we have already drived the Dupire Local Volatility PDE. However, doing duffusion directly using the Dupire PDE is not a good choice, because its drift cause instability during duffusion. In this post, we are going to derive the drift-less PDE from Dupire PDE, for our future duffusion usage.
 
-Initially, we have /(C(K,T)/) as the call option price function as of /(K/) and /(T/). Then we define the normalized strike /(k=ln/)
-
+Initially, we have \(C(K,T)\) as the call option price function as of \(K\) and \(T\). Then we define the normalized strike \(k=\ln(\frac{K}{F})\), or \(K=F\cdot e^k\). And we will have 
+$$\frac{\partial K}{\partial k}=K$$
+For the change of variable you need to write first:
+$$\tilde{C}(k,T)=C(K,T).$$
+Taking the first and second derivatives of \(\tilde{C}\) with respect to \(k\),
+$$\frac{\partial \tilde{C}(k,T)}{\partial k}=\frac{\partial C}{\partial K}\frac{\partial K}{\partial k}=K\frac{\partial C}{\partial K},$$
+$$\begin{split}
+\frac{\partial \tilde{C}(k,T)}{\partial k^2}&=\frac{\partial}{\partial k}(K)\cdot\frac{\partial C}{\partial K}+K\cdot\frac{\partial}{\partial k}(\frac{\partial C}{\partial K}) \\
+&=K\cdot\frac{\partial C}{\partial K}+K^2\cdot\frac{\partial^2 C}{\partial K^2}.
+\end{split}$$
+Taking the first derivatives of \(\tilde{C}\) with respect to \(T\),, and because \(K=Fe^k\),
+$$\frac{\partial \tilde{C}(k,T)}{\partial T}=\frac{\partial C}{\partial K}\frac{\partial K}{\partial T}+\frac{\partial C}{\partial T}$$
+According to Dupire local vol PDE equation, $\frac{\partial C}{\partial T}$ is defined as following
+$$\frac{\partial C}{\partial T}(K,T)=-r_fC(K,T)-(r_d(T)-r_f(T))K\frac{\partial C}{\partial K}(K,T)+\frac{\sigma^2(K,T)}{2}K^2\frac{\partial^2C}{\partial K^2}(K,T).$$
+Substitute \(\frac{\partial C}{\partial T}\) back to the original \(\frac{\partial \tilde{C}}{\partial T}\) equation, we get 
+$$\frac{\partial \tilde{C}}{\partial T}(k,T)=-r_fC(K,T)+\frac{\sigma^2(K,T)}{2}K^2\frac{\partial^2C}{\partial K^2}(K,T)$$
 
 <div id="disqus_thread"></div>
 
