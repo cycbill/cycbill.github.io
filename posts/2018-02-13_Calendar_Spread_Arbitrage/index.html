@@ -4,7 +4,7 @@
     
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-        <title>Drift-less Local Volatility PDE - Yechang's blog</title>
+        <title>Calendar Spread Arbitrage - Yechang's blog</title>
         
         <link rel="stylesheet" href="../../fonts/Serif/cmun-serif.css" />
         <link rel="stylesheet" href="../../fonts/Serif-Slanted/cmun-serif-slanted.css" />
@@ -84,11 +84,11 @@
                 <div class="container">
                     <div class="row">
                         <div class="col-md-8">
-                            <h1>Drift-less Local Volatility PDE</h1>
+                            <h1>Calendar Spread Arbitrage</h1>
                             <div id="body">
                                 <div class="info">
-    <p style="font-family:CMSS; font-size:130%">Posted on December  17, 2017</p>
-    <p style="font-family:CMS; font-style:italic"><a href="../../posts/tags/MNIST.html">Local Volatility</a>, <a href="../../posts/tags/data_visualization.html">Drift-less</a>, <a href="../../posts/tags/data_visualization.html">PDE</a>, <a href="../../posts/tags/machine_learning.html">Numerical Method</a></p>
+    <p style="font-family:CMSS; font-size:130%">Posted on Feburary  13, 2018</p>
+    <p style="font-family:CMS; font-style:italic"><a href="../../posts/tags/MNIST.html">Volatility Arbitrage</a>, <a href="../../posts/tags/data_visualization.html">Calendar Spread Arbitrage</a>, <a href="../../posts/tags/machine_learning.html">Time Interpolation</a></p>
     <!--
         by yechang
     -->
@@ -192,26 +192,59 @@ setTimeout(function() {mnist_tooltip.hide();}, 3000);
 </script>
 
 
-In the last post, we have already drived the Dupire Local Volatility PDE. However, doing duffusion directly using the Dupire PDE is not a good choice, because its drift cause instability during duffusion. In this post, we are going to derive the drift-less PDE from Dupire PDE, for our future duffusion usage.
-
-Initially, we have \(C(K,T)\) as the call option price function as of \(K\) and \(T\). Then we define the normalized strike \(k=\ln(\frac{K}{F})\), or \(K=F\cdot e^k\). And we will have 
-$$\frac{\partial K}{\partial k}=K$$
-For the change of variable you need to write first:
-$$\tilde{C}(k,T)=C(K,T).$$
-Taking the first and second derivatives of \(\tilde{C}\) with respect to \(k\),
-$$\frac{\partial \tilde{C}(k,T)}{\partial k}=\frac{\partial C}{\partial K}\frac{\partial K}{\partial k}=K\frac{\partial C}{\partial K},$$
+1. Dupire local volatility SDE is defined as:
+$$\mathrm{d}S_t = (r_d(t)-r_f(t))S_t\mathrm{d}t + \sigma(t,S_t)\mathrm{d}W_t$$
+<b>Definition (Fokker-Planck Equitation)</b> <i>For a SDE</i>
+$$\mathrm{d}X_t = \mu(X_t,t)\mathrm{d}t + \sigma(X_t,t)\mathrm{d}W_t$$
+<i>with drift \(\mu(X_t,t)\) and diffusion \(D(X_t,t)=\sigma^2(X_t,t)/2\), the Fokker-Planck equation for the probability density p(x,t) of random variable \(X_t\) is</i>
+$$\frac{\partial}{\partial t}p(x,t) = -\frac{\partial}{\partial x}[\mu(x,t)p(x,t)]+\frac{\partial^2}{\partial x^2}[D(x,t)p(x,t)].$$
+</div>
+So we get the Fokker-Planck equation of spot price \(S_t\) process as following (we define \(\mu(t)=r_d(t)-r_f(t)\)):
+$$\frac{\partial}{\partial t}p(S_t,t) = -\frac{\partial}{\partial x}\left[\mu(t)\cdot S_t\cdot p(S_t,t)\right]+\frac{\partial^2}{\partial x^2}\left[\frac{1}{2}\sigma^2(S_t,t)\cdot S^2_t\cdot p(x,t)\right].$$
+<br>
+2. From option price definition derive its derivatives. 
+Assume \(C(T,K)\) is the Call option price at time \(t\), and define \(DF(r_d(T))=\int_t^T e^{-r_d(u)}\mathrm{d}u\), the Call option price is evaluated as the discounted expectation of the option payoff at maturity:
+$$C(K,T)=DF(r_d(T)) \int_0^\infty Max(S_T-K)p(S_T,T)\mathrm{d}S_T.$$
+The first and second order derivatives of option price against strike are:
+$$\frac{\partial C(K,T)}{\partial K}=-DF(r_d(T)) \int_K^\infty p(S_T,T)\mathrm{d}S_T,$$
+$$\frac{\partial^2 C(K,T)}{\partial K^2}=DF(r_d(T)) \cdot p(K,T),$$
+so the PDE of local vol becomes
+\[\begin{split}
+\frac{\partial C(K,T)}{\partial T}=&-r_d(T)C(K,T)+DF(r_d(T)) \int_0^\infty Max(S_T-K) \frac{\partial p(S_T,T)}{\partial T}\mathrm{d}S_T \\
+=&-r_d(T)C(K,T)+DF(r_d(T)) \int_K^\infty (S_T-K) \\
+&\left\{-\frac{\partial[\mu(T) S_T\cdot p(S_T,T)]}{\partial S_T}+\frac{\partial^2 [0.5\sigma^2(S_T,T)\cdot S^2_T\cdot p(S_T,T)]}{\partial S^2_T}\right\}\mathrm{d}S_T \\
+\end{split}\]
+<br>
+3. Two useful integrals. In order to simplify the above PDE, let's calculate two following integrals first.
+$$I_1 = -\mu(T) \int_K^\infty (S_T-K)\left\{\frac{\partial[S_T\cdot p(S_T,T)]}{\partial S_T}\right\}\mathrm{d}S_T$$
+$$I_2 = \int_K^\infty (S_T-K)\left\{\frac{\partial^2 [0.5\sigma^2(S_T,T)\cdot S^2_T\cdot p(S_T,T)]}{\partial S^2_T}\right\}\mathrm{d}S_T$$
+For \(I_1\), because
+\[\begin{split}
+\frac{C(K,T)}{DF(r_d(T))} &= \int_K^\infty (S_T-K)p(S_T,T)\mathrm{d}S_T \\
+&= \int_K^\infty S_Tp(S_T,T)\mathrm{d}S_T - K\int_K^\infty p(S_T,T)\mathrm{d}S_T \\
+&= \int_K^\infty S_Tp(S_T,T)\mathrm{d}S_T + \frac{K}{DF(r_d(T))}\frac{\partial C(K,T)}{\partial K}
+\end{split}\]
+and
+$$\int_K^\infty S_Tp(S_T,T)\mathrm{d}S_T = \frac{C(K,T)}{DF(r_d(T))} - \frac{K}{DF(r_d(T))}\frac{\partial C(K,T)}{\partial K}$$
+so we define \(u = S_T - K\), \(u'= 1\), \(v'=\frac{\partial}{\partial S_T}[S \cdot p(S_T,T)]\), \(v=S \cdot p(S_T,T)\), and can get
 $$\begin{split}
-\frac{\partial \tilde{C}(k,T)}{\partial k^2}&=\frac{\partial}{\partial k}(K)\cdot\frac{\partial C}{\partial K}+K\cdot\frac{\partial}{\partial k}(\frac{\partial C}{\partial K}) \\
-&=K\cdot\frac{\partial C}{\partial K}+K^2\cdot\frac{\partial^2 C}{\partial K^2}.
+I_1 &= \mu(T)(S_T-K)S_T p(S_T,T)\Big|^{\infty}_{K}-\mu(T)\int_K^\infty S_Tp(S_T,T)\mathrm{d}S_T \\
+    &=0-0-\mu(T)\int_K^\infty S_Tp(S_T,T)\mathrm{d}S_T \\
+    &=-\frac{\mu(T)C(K,T)}{DF(r_d(T))} + \frac{\mu(T)K}{DF(r_d(T))}\frac{\partial C(K,T)}{\partial K}.
 \end{split}$$
-Taking the first derivatives of \(\tilde{C}\) with respect to \(T\),, and because \(K=Fe^k\),
-$$\frac{\partial \tilde{C}(k,T)}{\partial T}=\frac{\partial C}{\partial K}\frac{\partial K}{\partial T}+\frac{\partial C}{\partial T}$$
-According to Dupire local vol PDE equation, \(\frac{\partial C}{\partial T}\) is defined as following
-$$\frac{\partial C}{\partial T}(K,T)=-r_fC(K,T)-(r_d(T)-r_f(T))K\frac{\partial C}{\partial K}(K,T)+\frac{\sigma^2(K,T)}{2}K^2\frac{\partial^2C}{\partial K^2}(K,T).$$
-Substitute \(\frac{\partial C}{\partial T}\) back to the original \(\frac{\partial \tilde{C}}{\partial T}\) equation, we get 
-$$\frac{\partial \tilde{C}}{\partial T}(k,T)=-r_fC(K,T)+\frac{\sigma^2(K,T)}{2}K^2\frac{\partial^2C}{\partial K^2}(K,T)$$
-And finally give the `driftless' PDE by substituting back \(\frac{\partial^2C}{\partial K^2}\) in term of \(\frac{\partial \tilde{C}}{\partial k}\) and \(\frac{\partial^2 \tilde{C}}{\partial k^2}\)
-$$\frac{\partial \tilde{C}}{\partial T}(k,T)=-r_f(T)\tilde{C}(k,T)+\frac{\sigma^2(k,T)}{2}\left[\frac{\partial^2 \tilde{C}}{\partial k^2}(k,T)-\frac{\partial \tilde{C}}{\partial k}(k,T)\right].$$
+For \(I_2\), because
+$$p(K,T)=\frac{1}{DF(r_d(T))}\frac{\partial^2 C}{\partial K^2},$$
+so using integral by parts with \(u=S_T-K\), \(u'=1\), \(v'=\frac{\partial^2}{\partial S^2}[\sigma^2(S_T,T) S^2_T p(S_T,T)]\), \(v=\frac{\partial}{\partial S}[\sigma^2(S_T,T) S^2_T p(S_T,T)]\), we can get
+$$\begin{split}
+I_2 &= 0.5(S_T-K)\frac{\partial}{\partial S}\left[\sigma^2(S_T,T) S^2_T p(S_T,T)\right]\Big|^{\infty}_{K} - 0.5\int_K^\infty \frac{\partial}{\partial S}\left[\sigma^2(S_T,T) S^2_T p(S_T,T)\right] \mathrm{d}S_T \\
+    &= 0 - 0 - 0.5\sigma^2(S_T,T) S^2_T p(S_T,T)\Big|^\infty_K\\
+    &= \frac{0.5\sigma^2(K,T)K^2}{DF(r_d(T))}\frac{\partial^2 C}{\partial K^2}.
+\end{split}$$
+<br>
+4. Put back the two integrals into the PDE of call option, we will get the PDE of Dupire Local Volatility:
+$$\begin{split}
+\frac{\partial C(K,T)}{\partial T}= -r_f(T)C(K,T) - \left[r_d(T)-r_f(T)\right]K\frac{\partial C(K,T)}{\partial K} + \frac{1}{2}\sigma^2(K,T)K^2\frac{\partial^2 C}{\partial K^2}.
+\end{split}$$
 
 
 <div id="disqus_thread"></div>

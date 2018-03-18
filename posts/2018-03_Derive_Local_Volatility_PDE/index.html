@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head><meta charset="utf-8" />
-<title>Feynman_Kac_Equation</title><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"></script>
+<title>Local_Volatility</title><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
 
 <style type="text/css">
@@ -11775,7 +11775,7 @@ div#notebook {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="Feynman-Kac,-Fokker-Planck,-and-Kolmogorov-Equations">Feynman-Kac, Fokker-Planck, and Kolmogorov Equations<a class="anchor-link" href="#Feynman-Kac,-Fokker-Planck,-and-Kolmogorov-Equations">&#182;</a></h1>
+<h1 id="Derive-Local-Volatility">Derive Local Volatility<a class="anchor-link" href="#Derive-Local-Volatility">&#182;</a></h1>
 </div>
 </div>
 </div>
@@ -11783,22 +11783,7 @@ div#notebook {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="I.-Feynman-Kac-Theorem">I. Feynman-Kac Theorem<a class="anchor-link" href="#I.-Feynman-Kac-Theorem">&#182;</a></h2>
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p><strong>Feynman-Kac Theorem.</strong> <em>Consider the stochastic differential equation</em></p>
-<p>$$dX(u)=\beta(u,X(u))du+\gamma(u,X(u))dW(u)$$</p>
-<p><em>Let h(y) be a Borel-measurable function. Fix $T&gt;0$, and let $t\in [0,T]$ be given. Define the function</em></p>
-<p>$$g(t,x)=\mathbb{E}^{t,x}h(X(T)).$$</p>
-<p><em>(We assume that $\mathbb{E}^{t,x}\left|h(X(T))\right|&lt;\infty$ for all $t$ and $x$.) Then $g(t,x)$ satisfies the partial differential equation</em></p>
-<p>$$g_t(t,x)+\beta(t,x)g_x(t,x)+\frac{1}{2}\gamma^2(t,x)g_{xx}(t,x)=0$$</p>
-<p><em>and the terminal condition</em></p>
-<center>$g(T,x)=h(x)$ _for all_ $x$.</center><p>The Feynman-Kac Theorem establish  a link between parabolic partial differential equations (PDEs) and stochastic processes. It offers a method of solving certain partial differential equations by simulating random paths of a stochastic process. Conversely, an important class of expectations of random processes can be computed by deterministic methods.</p>
+<p>In this post we will derive the two versions of Dupire Local Volatility partial differential equation, one is the PDE under risk-neutral meassure, and the other one is the PDE under T-Forward measure. In order to achieve our goal, we proceed our derivation with the following order: (1) derive the stock price process under risk-neutral measure; (2) we derive the Dupire Local Volatility PDE under risk-neutral measure; (3) changing the <em>Numéraire</em> from risk-neutral measure to T-Forward measure, we generate the forward stock price process under T-Forward measure; (4) derive the Dupire Local Volatility PDE under T-Forward measure.</p>
 
 </div>
 </div>
@@ -11807,6 +11792,57 @@ div#notebook {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="I.-Risk-Neutral-Measure-of-Stock-Price-Process">I. Risk-Neutral Measure of Stock Price Process<a class="anchor-link" href="#I.-Risk-Neutral-Measure-of-Stock-Price-Process">&#182;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Assume that a stock price process evolves according to the stochastic differential equation</p>
+<p>\begin{equation}
+dS(t) = \alpha(t)dt + \sigma(t, S(t))S(t)dW(t),
+\end{equation}</p>
+<p>where the <strong>deterministic</strong> mean return rate $\alpha(t)$ is a function of time, and the <strong>deterministic</strong> volatility $\sigma(t,x)$ is a function of time and the underlying stock price, and $W$ is a Brownian motion under the <strong>actual measure</strong> $\mathbb{P}$. This stock price is a genrerialized geometric Brownian motion</p>
+<p>\begin{equation}
+S(t) = S(0)\exp \left\{\int_0^t \sigma(s)dW(s) + \int_0^t \left(\alpha(s)-\sigma(s)^2 \right) ds \right\}.
+\end{equation}</p>
+<p>In addition, suppose we have an adapted <strong>deterministic</strong> interest rate process $r(t)$, and we assume the stock has no dividend payment. (If we assume propotional dividend rate $q(t)$, we just replace $r(t)$ with $r(t)-q(t)$ as the risk-free rate.) We can define the <em>discounted process</em></p>
+<p>\begin{equation}
+D(t) = e^{-\int_0^t r(s) ds}\end{equation}</p>
+<p>and note that</p>
+<p>\begin{equation}
+dD(t) = -r(t)D(t)dt.\end{equation}</p>
+<p><em>(Note: in the definition of stock price process and discounted process above, we highlight that $\mu(t)$, $\sigma(t,x)$, $r(t)$ are deterministic as it is a very important assumption. Deterministic means that at any time point the variable value is determined instead of a random variable, i.e. its mean value is itself and its variance is zero. It is important because it avoids introducing extra variance term into the diffusion process, and keep the volatility term unchanged when changing the probability measurement to risk-neutral measure or T-Forward measure.)</em></p>
+<p>The discounted stock price process is</p>
+<p>\begin{equation}
+D(t)S(t)=S(0)\exp \left\{\int_0^t \sigma(s)dW(s) + \int_0^t \left[\alpha(s)- r(s) -\sigma(s)^2 \right] ds \right\}, \end{equation}</p>
+<p>and its differential is</p>
+<p>\begin{equation}
+dD(t)S(t) = \left(\alpha(t)-r(t)\right)D(t)S(t)dt + \sigma(t)D(t)S(t)dW(t) \\
+=\sigma(t)D(t)S(t)\left[\Theta(t)dt + dW(t)\right],\end{equation}</p>
+<p>where we define the <em>market price of risk</em> to be</p>
+<p>\begin{equation}
+\Theta(t) = \frac{\alpha(t) - r(t)}{\sigma(t)}.\end{equation}</p>
+<p>Then we introduce the probability measure $\tilde{\mathbb{P}}$ by Girsanov's Theorem, which uses the market price of risk $\Theta(t)$.</p>
+<p><strong>Girsanov's Theorem.</strong> <em>Let $W(t)$ be a Brownian motion on a probability space $(\Omega, \mathcal{F}, \mathbb{P})$, and let $\mathcal{F}(t)$ be a filteration for this Brownian. Let $\Theta(t)$ be an adapted process. Define</em></p>
+<p>\begin{equation}
+Z(t) = \exp \left\{-\int_0^t \Theta(s)dW(s) - \frac{1}{2}\int_0^t\Theta^2(s)ds \right\},\end{equation}</p>
+<p>\begin{equation}
+\tilde{W}(t) = W(t) + \int_0^t\Theta(s)ds,\end{equation}</p>
+<p><em>then $\mathbb{E}Z=1$ and under the probability measure $\tilde{\mathbb{P}}$ given by</em></p>
+<p>\begin{equation}
+\tilde{\mathbb{P}}(A) = \int_A Z(\omega)d\mathbb{P}(\omega) \text{ for all } A \in \mathcal{F},\end{equation}</p>
+<p><em>the process $\tilde{W}(t)$ is a Brownian motion.</em></p>
+<p>We call $\tilde{\mathbb{P}}$ the <strong>risk-neutral measure</strong> because it is equivalent to the original measure $\mathbb{P}$ and it renders the discounted stock price $D(t)S(t)$ into a martingle. Indeed,</p>
+<p>\begin{equation}
+D(t)S(t) = S(0) + \int_0^t \sigma(s)D(s)S(s)d\tilde{W}(s),\end{equation}</p>
+<p>and under $\tilde{\mathbb{P}}$ the process $\int_0^t \sigma(s)D(s)S(s)d\tilde{W}(s)$ is an Ito integral and hence a martingale.</p>
+<p>Thus, the undiscounted stock price $S(t)$ has mean rate of return equal to  $r(t)-q(t)$ under $\tilde{\mathbb{P}}$, and the stock price SDE becomes</p>
+<p>\begin{equation}
+dS(t) = r(t)S(t)dt + \sigma(t, S(t))S(t)d\tilde{W}(t).\end{equation}</p>
+<p>Please note that the change from <strong>actual measure</strong> $\mathbb{P}$ to the <strong>risk-neutral measure</strong> $\tilde{\mathbb{P}}$ changes the mean rate of return of the stock, but not the volatility.</p>
 
 </div>
 </div>
@@ -11815,7 +11851,7 @@ div#notebook {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="II.-Kolmogorov-Backward-Equation">II. Kolmogorov Backward Equation<a class="anchor-link" href="#II.-Kolmogorov-Backward-Equation">&#182;</a></h2>
+<h2 id="II.-Local-Volatility-PDE-under-Risk-Neutral-Measure">II. Local Volatility PDE under Risk-Neutral Measure<a class="anchor-link" href="#II.-Local-Volatility-PDE-under-Risk-Neutral-Measure">&#182;</a></h2>
 </div>
 </div>
 </div>
@@ -11823,135 +11859,191 @@ div#notebook {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p><strong>Kolmogorov backward equation.</strong> <em>Consider the stochastic differential equation</em></p>
-<p>$$dX(u)=\beta(u,X(u))du + \gamma(u,X(u))dW(u).$$</p>
-<p><em>For a geometric Brownian motion as above, let the process begin at an arbitrary initial positive value $X(t) = x$ at an arbitrary initial time $t$ and evolve it forward using this stochastic differential equation. For $0 \leq t &lt; T$, let $p(t,T,x,y)$ be the transition density for the solution to this equation.</em></p>
-<p><em>Then $p(t,T,x,y)$ satisfies the Kolmogorov backward equation</em></p>
-<p>$$-p_t(t,T,x,y) = \beta(t,x)p_x(t,T,x,y)+\frac{1}{2}\gamma^2(t,x)p_{xx}(t,T,x,y).$$</p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p><em>Proof:</em></p>
-<p>We know from the Feynman-Kac Theorem that, for any function $h(y)$, the function</p>
-<p>$$g(t,x) = \mathbb{E}^{t,x}h(X(T)) = \int_0^{\infty} h(y)p(t,T,x,y)dy$$</p>
-<p>satisfies the partial differential equation</p>
-<p>$$g_t(t,x) + \beta(t,x)g_x(t,x)+\frac{1}{2}\gamma^2(t,x)g_{xx}(t,x)=0.$$</p>
-<p>We get $g_t$, $g_x$ and $g_{xx}$ from $g(t,x)$ as following:</p>
-<p>$$g_t = \int_0^{\infty}h(y)p_tdy, \quad g_x = \int_0^{\infty}h(y)p_xdy, \quad g_{xx} = \int_0^{\infty}h(y)p_{xx}dy$$</p>
-<p>Put back into Feynman-Kac equation:</p>
-<p>$$\int_0^{\infty}h(y)p_tdy + \beta(t,x)\int_0^{\infty}h(y)p_xdy + \frac{1}{2}\gamma^2(t,x)\int_0^{\infty}h(y)p_{xx}dy = 0$$</p>
-<p>$$ \Rightarrow \int_0^{\infty}h(y)\left[p_t + \beta(t,x)p_x + \frac{1}{2}\gamma^2(t,x)p_{xx} \right]dy = 0$$</p>
-<p>To make the above equation always hold regardless of the choice of function $h(y)$, $p(t,T,x,y)$ should satisfy the Kolmogorov backward equation. <div style="text-align: right"> $\square$ </div></p>
-<p>The relationship between <strong>Feynman-Kac theorem</strong> and <strong>Kolmogorov backward equation</strong> is that:</p>
-<p>(1) Feynman-Kac theorem establishes that a class of expectation on stochastic process can be computed by deterministic methods with final terminal condition. Here the final terminal condition means the Markov process will stop finally at final time $T$ and we know about its specific $X(T)$ values of time $T$.</p>
-<p>(2) In contrast, Kolmogorov backward equation extend this establishment to a 'killed' Markov process, in which we don't need to know about the final terminal condition $X(T)$ at time $T$, but just the its values $X(t)$ at intermedial time $t$, and to calculate the expectation of $X(s)$ at more previous time $s$.</p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="III.-Kolmogorov-Forward-Equation-(Fokker-Planck-Equation)">III. Kolmogorov Forward Equation (Fokker-Planck Equation)<a class="anchor-link" href="#III.-Kolmogorov-Forward-Equation-(Fokker-Planck-Equation)">&#182;</a></h2>
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p><strong>Kolmogorov forward equation (Fokker-Planck equation).</strong> <em>We begin with the same stochastic differential equation,</em></p>
-<p>$$dX(u) = \beta(u, X(u))du + \gamma(u,X(u))dW(u)$$</p>
-<p><em>Let $p(t,T,x,y)$ be the transition density, then it satisfies the Kolmogorov forward equation</em></p>
-<p>$$\frac{\partial}{\partial T}p(t,T,x,y) = -\frac{\partial}{\partial y}\left(\beta(t,y)p(t,T,x,y)\right)+\frac{1}{2}\frac{\partial^2}{\partial y^2}\left(\gamma^2(T,y)p(t,T,x,y)\right).$$</p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p><em>Proof:</em></p>
-<p>(i) Let $b$ be a positive constant and let $h_b(y)$ be a function with continuous first and second derivatives such that $h_b(x)=0$, and $h'_b(x)=0$, for all $x\leq0$ or $x\geq y$.</p>
-<p>Let $X(u)$ be the solution to the stochastic differential equation with initial condition $X(t) = x \in (0,b)$.</p>
-<p>Use Ito's formula, we can compute $dh_b(X(u))$:</p>
-<p>\begin{split}
-dh_b(X(u)) &amp;= h'_b(X(u))dX(u)+\frac{1}{2}h''_b(X(u))dX(u)dX(u) \\
-&amp;= \left[\beta(u,X(u))h'_b(X(u)) + \frac{1}{2}\gamma(u,X(u))h''_b(X(u))\right]du \\
-&amp; \quad + \gamma(u,X(u))h'_b(X(u))dW(u)
-\end{split}.</p>
-<p>(ii) Let $0 \leq t &lt; T$ be given, and integrate the equation we obtained in (i) from $t$ to $T$:</p>
-<p>$$(1): \int_t^T dh_b(X(u)) = h_b(X(u))\mid_t^T = h_b(X(T)) - h_b(x),$$</p>
-<p>$$(2): \int_t^T \left[\beta(u,X(u))h'_b(X(u)) + \frac{1}{2}\gamma(u,X(u))h''_b(X(u))\right]du,$$</p>
-<p>$$(3): \int_t^T \gamma(u,X(u))h'_b(X(u))dW(u).$$</p>
-<p>Take expectations and use the fact that $X(u)$ has density $p(t, u, x, y)$ in the $y$-variable to obtain:</p>
-<p>\begin{split}
-(1): \mathbb{E}^{T,y}\left[h_b(X(T)) - h_b(x)\right] &amp;= \int_{-\infty}^{\infty}h_b(y)p(t,T,x,y)dy - h_b(x) \\
-&amp;= \int_{0}^{b}h_b(y)p(t,T,x,y)dy - h_b(x)
-\end{split}</p>
-<p>because $h_b(y) = 0$ for $y \leq 0$ or $y \geq b$.</p>
-<p>For the 2nd part,</p>
-<p>\begin{split}
-(2): \mathbb{E}^{T,y}\left\{\int_t^T \left[\beta(u,X(u))h'_b(X(u)) + \frac{1}{2}\gamma(u,X(u))h''_b(X(u))\right]p(t,u,x,y)du\right\} \\
-= \int_t^T \int_0^b \beta(u,y)h'_b(y)p(t,u,x,y)dydu + \int_t^T \int_0^b\frac{1}{2}\gamma(u,y)h''_b(y)p(t,u,x,y)dydu.
-\end{split}</p>
-<p>And for 3rd part,
-$$(3): \mathbb{E}^{T,y} \left[\int_t^T \gamma(u,X(u))h'_b(X(u))dW(u) \right] = 0$$</p>
-<p>because the process is a martingale.</p>
-<p>In summary, we get</p>
-<p>\begin{split}
-\int_{0}^{b}h_b(y)p(t,T,x,y)dy = h_b(x) + \int_t^T \int_0^b \beta(u,y)p(t,u,x,y)h'_b(y)du \\
-+\int_t^T \int_0^b\frac{1}{2}\gamma(u,y)p(t,u,x,y)h''_b(y)du.
-\end{split}</p>
-<p>(iii) In the right hand side of the equation above, in the first integral, let's define $A = \beta(u,y)p(t,u,x,y)$, $A'=\frac{\partial}{\partial y}[\beta(u,y)p(t,u,x,y)]$, $B'=h'_b(y)$, $B=h_b(y)$, by integration by part formula, we get</p>
-<p>\begin{split}
-\int_0^b \beta(u,y)h'_b(y)dy = AB\mid_0^b - \int_t^T \int_0^b A'Bdy \\
-=0 - \int_0^b \frac{\partial}{\partial y}[\beta(u,y)p(t,u,x,y)]h_b(y)dy
-\end{split}</p>
-<p>because $h_b(y) = 0$ for $y \leq 0$ or $y \geq b$.</p>
-<p>And in the second integral, we can use the similar method to integrate twice,</p>
-<p>\begin{split}
-\int_0^b\frac{1}{2}\gamma(u,y)p(t,u,x,y)h''_b(y)dy = \int_0^b \frac{\partial^2}{\partial y^2}[\frac{1}{2}\gamma(u,y)p(t,u,x,y)]h_b(y)dy.
-\end{split}</p>
-<p>So the equation in (ii) can transform into 
+<p>Suppose the stock price process diffuses following equation (12) with mean reutrn rate $r(t)$ and local volatility $\sigma(t, S(t))$ under <strong>risk-neutral measure</strong> $\tilde{\mathbb{P}}$. We change a bit our notation by setting $S(0)=x$ and $S(T)=y$, in order to simply the formula expression.</p>
+<p>The risk-neutral value $C(t, T, x, K)$ of a European option at time t with spot $S(t)=x$, strike $K$ and expiration $T$ is given by</p>
+<p>\begin{equation}
+C(t,T,x,K)=D(t,T)\tilde{\mathbb{E}}^{y} \left[ (y-K)^{+} \right] = D(t,T)\int_K^{\infty} \left( y-K \right)\tilde{p} \left( t,T,x,y \right)dy,\end{equation}</p>
+<p>where $D(t,T)=e^{-\int_t^T r(u)du}$ is the discounting factor, $\tilde{\mathbb{E}}^{y}$ means the taking the expectation of $y$ variable under risk-neutral measure $\tilde{\mathbb{P}}$, and $\tilde{p} \left( t,T,x,y \right)$ is the transition density of the stock price process at maturity time $T$ with inital condition $S(0)=x$ at time $t$.</p>
+<p>And the first and second derivatives of option value with respect to $K$ is:</p>
+<p>\begin{equation}
+\frac{\partial C}{\partial K}= -D(t,T)\int_K^{\infty} \tilde{p}(t,T,x,y)dy,\end{equation}</p>
+<p>\begin{equation}
+\frac{\partial^2 C}{\partial K^2}= D(t,T) \tilde{p}(t,T,x,y).\end{equation}</p>
+<p>As $S(T)$ is a Markov process (let one watches the stochastic process $S(u)$ for $0 \leq u \leq t$, the only relevant piece of information when computing $\mathbb{E}[h(S(T))|\mathcal{F}(t)]$ is the value of $S(t)$.) under risk-neutral measure, and it has known initial condition $S(0)=x$, the stock process will evolves following <strong>Fokker-Planck equation</strong> (or <strong>Kolmogorov Forward equation</strong>):</p>
+<p>\begin{equation}
+\frac{\partial}{\partial T}\tilde{p}(t,T,x,y)=-\frac{\partial}{\partial y}\left[r(T)y\tilde{p}(t,T,x,y\right]+\frac{1}{2}\frac{\partial^2}{\partial y^2}\left[\sigma^2(T,y)y^2\tilde{p}(t,T,x,y)\right].
+\end{equation}</p>
+<p>We take the first derivative of option value with respect to $T$:</p>
+<p>\begin{equation}
 \begin{split}
-\int_{0}^{b}h_b(y)p(t,T,x,y)dy = h_b(x) + \int_t^T \int_0^b \frac{\partial}{\partial y}[\beta(u,y)p(t,u,x,y)]h_b(y)dydu \\
- \ + \int_t^T \int_0^b \frac{\partial^2}{\partial y^2}[\frac{1}{2}\gamma(u,y)p(t,u,x,y)]h_b(y)dydu.
-\end{split}</p>
-<p>(iv) Differentiate the equation above with respect to $T$, we can optain</p>
-<p>\begin{split}
-\int_0^bh_b(y)\left[\frac{\partial}{\partial T}p(t,T,x,y)+\frac{\partial}{\partial y}(\beta(T,y)p(t,T,x,y)) \\
--\frac{1}{2}\frac{\partial^2}{\partial y^2}(\gamma^2(T,y)p(t,T,x,y))\right]dy = 0.
-\end{split}</p>
-<p>As for arbitrage function $h_b(y)$, the equation above always holds, we can get</p>
-<p>$$\frac{\partial}{\partial T}p(t,T,x,y)+\frac{\partial}{\partial y}(\beta(T,y)p(t,T,x,y)) - \frac{1}{2}\frac{\partial^2}{\partial y^2}(\gamma^2(T,y)p(t,T,x,y)) =0$$</p>
-<p>which is the form of Kolmogorov forward equation, or Fokker-Planck equation. <div style="text-align: right"> $\square$ </div></p>
+\frac{\partial C}{\partial T} &amp;=-r(T)C(t,T,x,K) + D(t,T)\int_K^{\infty} \left(y-K\right)\frac{\partial}{\partial T}[\tilde{p}(t,T,x,y)]dy \\
+&amp;= -r(T)C(t,T,x,K) + D(t,T)\int_K^{\infty} \left(y-K\right) \left\{-\frac{\partial (r(T)y\tilde{p})}{\partial y}+\frac{1}{2}\frac{\partial^2\left(\sigma^2(T,y)y^2\tilde{p}\right)}{\partial y^2}\right\} dy.
+\end{split}
+\end{equation}</p>
+<p>Define $u=y-K$, $u'=1$, $v'=\frac{\partial (r(T)y\tilde{p})}{\partial y}$, $v= r(T)y\tilde{p}$, and assume $\lim_{y\to\infty} (y-K)r(T)y\tilde{p}=0$, by the <em>integration by part</em> rule, we can get</p>
+<p>\begin{equation}
+-\int_K^{\infty} \left(y-K\right) \frac{\partial (r(T)y\tilde{p})}{\partial y} dy = \int_K^{\infty} r(T)y\tilde{p}(t,T,x,y)dSy.\end{equation}</p>
+<p>Similarly, we can use <em>integration by part</em> rule for twice and assume that $\lim_{y\to\infty}(y-K)\frac{\partial}{\partial y}\left(\sigma^2(T,y)y^2\tilde{p}\right)=0$ and $\lim_{y\to\infty}\left(\sigma^2(T,y)y^2\tilde{p}\right)=0$ to get</p>
+<p>\begin{equation}
+\frac{1}{2}\int_K^{\infty} \left(y-K\right) \frac{\partial^2}{\partial y^2}\left(\sigma^2(T,y)y^2\tilde{p}\right) dy = \frac{1}{2}\sigma^2(T,y)K^2\tilde{p}(t,T,x,K).\end{equation}</p>
+<p>Finally, put back the two integrals into the deviation to $T$, we can get</p>
+<p>\begin{equation}
+\frac{\partial C}{\partial T} =-r(T)C(t,T,x,K) + r(T)D(t,T)\int_K^{\infty} y\tilde{p}(t,T,x,y)dSy + \frac{1}{2}D(t,T)\sigma^2(T,y)K^2\tilde{p}(t,T,x,K),\end{equation}</p>
+<p>\begin{equation}
+\Rightarrow \quad \frac{\partial C}{\partial T} =  r(T)D(t,T)\int_K^{\infty} K\tilde{p}(t,T,x,y)dSy + \frac{1}{2}D(t,T)\sigma^2(T,y)K^2\tilde{p}(t,T,x,K),\end{equation}</p>
+<p>\begin{equation}
+\Rightarrow \quad \frac{\partial C}{\partial T} =  -r(T)K\frac{\partial C}{\partial K} + \frac{1}{2}\sigma^2(T,K)K^2\frac{\partial^2 C}{\partial K^2},\end{equation}</p>
+<p>which is the partial differential equation of <strong>Dupire Local Volatility</strong> under risk-neutral meassure.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="III.-Changing-of-Num&#233;raire:-T-Forward-Measure">III. Changing of Num&#233;raire: T-Forward Measure<a class="anchor-link" href="#III.-Changing-of-Num&#233;raire:-T-Forward-Measure">&#182;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>In the previous section, we have already derive the Local Volatility PDE under risk-neutral measure. However, if we express our pricing measurement under T-Forward meassure, the Local Volatility PDE can be simplified. In this session, we first define the T-Forward measure by changing Numéraire, and then show that the forward stock price process is a martingale under T-Forward measure. The martingale feature of the forward stock price process will return us a simplier <strong>Fokker-Planck Equation</strong>, which will lead to a simplier Local PDE equation.</p>
+<p>Before we start the discussion, let's reverse a bit our assumption about the risk-free interest rate process $r(t)$. Assume that these two process are not deterministic, but rather <strong>random process</strong>. As a result, the process $r(t)$ would have volatility $\sigma^*(t)$.</p>
+<p><br></p>
+<p>As a starting point, we give the definition of T-Forward as following:</p>
+<p><strong>Definition of T-Forward.</strong> <em>A forward contract is an agreement to pay specific delivery price $K$ at a delivery time $T$, for a asset whose price at time $t$ is $S(t)$. The T-Forward price $F(t,T)$ of this asset at time $t$ is the value $K$ that makes the forward contract have no-arbitrage price zero at time $t$. The expression of the T-Forward price would be</em></p>
+<p>\begin{equation}
+F(t,T) =S(t)\tilde{\mathbb{E}}[D(t,T)|\mathcal{F}(t)]=\frac{S(t)}{B(t,T)},
+\end{equation}</p>
+<p><em>where $\tilde{\mathbb{E}}$ is the expectation of the discounting process from time $t$ to $T$ under risk-neutral measure $\tilde{\mathbb{P}}$, $B(t,T)$ is the zero-coupon bond price with maturity $T$ at time $t$.</em></p>
+<p>The idea behind the formula is that, based on the information $\mathcal{F}(t)$ given by time $t$, one already know the stock price $S(t)$ at time $t$. Assume we agree to deliver a share of stock at price $K$ at forward time $T$, and at current time $t$ we borrow money to buy such a share of stock at price $S(t)$. Between time $t$ and $T$, we will receive stock dividend at rate $q(u)$ meanwhile pay borrow-money interest $r(u)$. So at time $T$, by no-arbitrage we should charge the stock sell by $K=S(t)/D(t,T)$. As the stock dividend and risk-free interest between time $t$ and $T$ is not known in advanced, we take the conditional expectation under current information $\mathcal{F}(t)$.</p>
+<p>We must highlight that, as we assume the interest rate is a random process and has volatility $\sigma^*(t)$, $D(t,T)$ will also be a random process, and so as forward price $F(t,T)$.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><br></p>
+<p>Next step we are going to change our numeraire to zero-coupon bond, and then show that the forward stock price process is a martingale under the corresponding <strong>T-Forward measure</strong>.</p>
+<p><strong>Stochastic Representation of Assets Theorem.</strong> <em>Let $N$ be a strictly positive price process for a non-dividend-paying asset, either primary or derivative. There exists a vector volatility process</em></p>
+<p>$$\nu(t) = \left( \nu_1(t),...,\nu_d(t) \right)$$</p>
+<p><em>such that</em></p>
+<p>\begin{equation}
+dN(t) = R(t)N(t)dt + N(t)\nu(t) \cdot d\tilde{W}(t).
+\end{equation}</p>
+<p><em>This equation is equivalent to each of the equations</em></p>
+<p>\begin{equation}
+d(D(t)N(t))=D(t)N(t)\nu(t) \cdot d\tilde{W}(t),
+\end{equation}</p>
+<p>\begin{equation}
+D(t)N(t)=N(0)\exp \left\{\int_0^t \nu(u)\cdot d\tilde{W}(u)-\frac{1}{2}\int_0^t\|\nu(u)\|^2du \right\},
+\end{equation}</p>
+<p>\begin{equation}
+N(t)=N(0)\exp \left\{\int_0^t \nu(u)\cdot d\tilde{W}(u)+\int_0^t\left( R(u) - \frac{1}{2} \|\nu(u)\|^2 \right) du \right\}.
+\end{equation}</p>
+<p><em>In other words, under the risk-neutral measure, every asset has a mean return equal to the interest rate. The realized risk-neutral return for assets is characterized solely by their volatility vector process.</em></p>
+<p><br></p>
+<p>According to the multidimensional Girsanov Theorem, we can use the volatility vector of $N(t)$ to change the measure. Define</p>
+<p>\begin{equation}
+\tilde{W}_j^{(N)}(t) = - \int_0^t \nu_j(u)du + \tilde{W}_j(t), \quad j = 1,...,d,
+\end{equation}</p>
+<p>and a new probability measure</p>
+<p>\begin{equation}
+\tilde{\mathbb{P}}^{(N)}(A)=\frac{1}{N(0)}\int_A D(T)N(T)d\tilde{\mathbb{P}} \quad \text{ for all } A \in \mathcal{F},
+\end{equation}</p>
+<p>We see from equation (26) that $\frac{D(T)N(T)}{N(0)}$ is the random variable $Z(T)$ in the Girsanov's Theorem. With these replacements, Girsanov's Theorem implies that the process $\tilde{W}^{(N)}=\left(\tilde{W}_1^{(N)}(t), ...,\tilde{W}_d^{(N)}(t)\right)$ is a $d$-dimensional Brownian motion under measure $\tilde{\mathbb{P}}^{(N)}$.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>With multidimensional Girsanov's Theorem, we can easily swith numeriare with assets in the market and change risk-neutral measure.</p>
+<p><strong>Change of Risk-Neutral Measure Theorem.</strong> _Let $S(t)$ and $N(t)$ be the price of two assets denominated in a common currency, and let $\sigma(t)=\left(\sigma_1(t),...,\sigma_d(t)\right)$ and $\nu(t)=\left(\nu_1(t),...,\nu_d(t)\right)$ denote their respective volatility vector processes:_</p>
+<p>$$d(D(t)S(t))=D(t)S(t)\sigma(t)\cdot d\tilde{W}(t), \quad d(D(t)N(t))=D(t)N(t)\nu(t)\cdot d\tilde{W}(t).$$</p>
+<p><em>Take $N(t)$ as the Numéraire, so the price of $S(t)$ becomes $S^{(N)}(t)=\frac{S(t)}{N(t)}$. According to multidimensional Girsanov's Theorem, under the measure $\tilde{P}^{(N)}$, the process $S^{(N)}$ is a martingale. Moreover,</em></p>
+<p>\begin{equation}
+dS^{(N)}(t)=S^{(N)}(t)[\sigma(t)-\nu(t)]\cdot d\tilde{W}^{(N)}(t).
+\end{equation}</p>
+<p><br></p>
+<p>In the <strong>Change of Risk-Neutral Measure Theorem</strong> above, if we let asset $S(t)$ be the stock price process with risk-free return $r(t)-q(t)$ and volatility $\sigma(t)$, and let the asset $N(t)=B(t,T)$ be the zero-coupon bond (fixed maturity $T$) with risk-free return $r(t)-q(t)$ and volatility $\sigma^*(t)$, then the zero-coupon price process satisfy</p>
+<p>$$d(D(t)B(t,T))=D(t)B(t,T)\sigma^*(t)\tilde{W}(t),$$</p>
+<p>and we use this zero-coupon bond $N(t)$ as Numéraire, then the stock price become $S^{(B)}(t)=\frac{S(t)}{B(t,T)}$. Under the measure $\tilde{P}^{(B)}$, the process $S^{(B)}$ is a martingale.</p>
+<p>If we compare the definition of T-Forward price $F(t,T)$ and stock price process $S^{(B)}(t)$, we can see they are actually the same. So we can also tell that <strong>T-Forward price $F(t,T)$ is a martingale under $\tilde{P}^{(B)}$ meassure:</strong></p>
+<p>\begin{equation}
+F(t,T) = \left[\sigma(t,T) - \sigma^*(t,T)\right]F(t,T)d\tilde{W}^{(B)}(t),
+\end{equation}</p>
+<p>and we call $\tilde{P}^{(B)}$ the <strong>T-Forward measure</strong>.</p>
+<p>Until here, we should notice that the volatility term of forward price is $\sigma(t,T) - \sigma^*(t,T)$ because the interest process also has its own volatility term. If we add back the assumption that the interest rate process is a <strong>deterministic</strong> process, we will get:</p>
+<ul>
+<li><p>T-Forward measure $\tilde{P}^{(B)}$ will be equivalent to risk-neutral measure $\tilde{P}$.</p>
+</li>
+<li><p>Forward price process will be a martingale under risk-neutral measure $\tilde{P}$.</p>
+</li>
+<li><p>Forward price process will have the same volatility as stock price process:</p>
+</li>
+</ul>
+<p>\begin{equation}
+F(t,T) = \sigma(t,T)F(t,T)d\tilde{W}(t).
+\end{equation}</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="IV.-Local-Volatility-PDE-under-T-Forward-measure">IV. Local Volatility PDE under T-Forward measure<a class="anchor-link" href="#IV.-Local-Volatility-PDE-under-T-Forward-measure">&#182;</a></h1>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>In the last session, we derive the stochstic differential equation (33) and (34) of Forward price under <strong>T-Forward measure</strong> under the condition whether interest rate process is random or deterministic. For simplicity, in this section we assume interest rate is deterministic, but the derivation logic would be the same.</p>
+<p>Diffusing with equation (34), Forward price process satisfy <strong>Fokker-Planck Equation</strong></p>
+<p>\begin{equation}
+\frac{\partial}{\partial T}\tilde{p}(t,T,x,y)= \frac{1}{2}\frac{\partial^2}{\partial y^2}\left[\sigma^2(T,y)y^2\tilde{p}(t,T,x,y)\right],
+\end{equation}</p>
+<p>with initial known condition $F(t,T)=x$ at time $t$. Also, $y$ is the Forward price at time $T$ that $F(T,T)=S(T)$ is unknown.</p>
+<p>Similar to section II, the risk-neutral value $C(t, T, x, K)$ of a European option at time t with Foward price $F(t,T)=x$, strike $K$ and expiration $T$ is given by</p>
+<p>\begin{equation}
+C(t,T,x,K)=D(t,T)\tilde{\mathbb{E}}^{y} \left[ (y-K)^{+} \right] = D(t,T)\int_K^{\infty} \left( y-K \right)\tilde{p} \left( t,T,x,y \right)dy.\end{equation}</p>
+<p>Taking the first and second derivatives of option value with respect to $K$ is:</p>
+<p>\begin{equation}
+\frac{\partial C}{\partial K}= -D(t,T)\int_K^{\infty} \tilde{p}(t,T,x,y)dy,\end{equation}</p>
+<p>\begin{equation}
+\frac{\partial^2 C}{\partial K^2}= D(t,T) \tilde{p}(t,T,x,y).\end{equation}</p>
+<p>Taking the first derivative of option value with respect to $T$ is:</p>
+<p>\begin{equation}
+\begin{split}
+\frac{\partial C}{\partial T} &amp;=-r(T)C(t,T,x,K) + D(t,T)\int_K^{\infty} \left(y-K\right)\frac{\partial}{\partial T}[\tilde{p}(t,T,x,y)]dy \\
+&amp;= -r(T)C(t,T,x,K) + D(t,T)\int_K^{\infty} \left(y-K\right) \left\{\frac{1}{2}\frac{\partial^2\left(\sigma^2(T,y)y^2\tilde{p}\right)}{\partial y^2}\right\} dy.
+\end{split}
+\end{equation}</p>
+<p>Replacing the integral term with equation (19), we will get the Local Vol PDE of Forward price process</p>
+<p>\begin{equation}
+\Rightarrow \quad \frac{\partial C}{\partial T} = \frac{1}{2}\sigma^2(T,K)K^2\frac{\partial^2 C}{\partial K^2}.\end{equation}</p>
 
 </div>
 </div>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[2]:</div>
+<div class="prompt input_prompt">In&nbsp;[1]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1">#Note: Formatting the web page</span>
-<span class="kn">from</span> <span class="nn">IPython.core.display</span> <span class="k">import</span> <span class="n">HTML</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">IPython.core.display</span> <span class="k">import</span> <span class="n">HTML</span>
 <span class="n">HTML</span><span class="p">(</span><span class="s2">&quot;&quot;&quot;</span>
 <span class="s2">&lt;style&gt;</span>
 <span class="s2">div {</span>
@@ -11976,7 +12068,7 @@ $$(3): \mathbb{E}^{T,y} \left[\int_t^T \gamma(u,X(u))h'_b(X(u))dW(u) \right] = 0
 
 <div class="output_area">
 
-<div class="prompt output_prompt">Out[2]:</div>
+<div class="prompt output_prompt">Out[1]:</div>
 
 
 
