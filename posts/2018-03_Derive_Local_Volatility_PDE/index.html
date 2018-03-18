@@ -11757,6 +11757,7 @@ div#notebook {
             processEscapes: true,
             processEnvironments: true
         },
+        TeX: { equationNumbers: { autoNumber: "AMS" } },
         // Center justify equations in code and markdown cells. Elsewhere
         // we use CSS to left justify single line equations in code cells.
         displayAlign: 'center',
@@ -11768,6 +11769,49 @@ div#notebook {
     </script>
     <!-- End of mathjax configuration --></head>
 <body>
+
+
+<div id="wrap">
+    <nav class="navbar navbar-inverse navbar-static-top" role="navigation">
+        <div class="container">
+            <!--Toggle header for mobile-->
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand active" href="../../" id="home">Yechang's blog</a>
+            </div>
+            <!--normal header-->
+            <div class="navbar-collapse collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li><a href="../../"><span class="glyphicon glyphicon-pencil"></span>  Blog</a></li>
+                    <li><a href="../../about.html"><span class="glyphicon glyphicon-user"></span>  About</a></li>
+                    <li><a href="../../contact.html"><span class="glyphicon glyphicon-envelope"></span>  Contact</a></li>
+                </ul>
+            </div><!--/.nav-collapse -->
+        </div>
+    </nav>
+
+    
+    <div id="content">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-8">
+                    <h1>Derive Local Volatility PDE</h1>
+                    <div id="body">
+                        <div class="info">
+<p style="font-family:CMSS; font-size:130%">Posted on March 18, 2018</p>
+<p style="font-family:CMS; font-style:italic"><a href="../../posts/tags/MNIST.html">Local Volatility</a>, <a href="../../posts/tags/data_visualization.html">PDE</a>, <a href="../../posts/tags/machine_learning.html">Risk-Neutral Measure</a>, <a href="../../posts/tags/machine_learning.html">T-Forward Measure</a></p>
+<!--
+by yechang
+-->
+</div>
+</br>
+
+
   <div tabindex="-1" id="notebook" class="border-box-sizing">
     <div class="container" id="notebook-container">
 
@@ -12010,8 +12054,8 @@ F(t,T) = \sigma(t,T)F(t,T)d\tilde{W}(t).
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>In the last session, we derive the stochstic differential equation (33) and (34) of Forward price under <strong>T-Forward measure</strong> under the condition whether interest rate process is random or deterministic. For simplicity, in this section we assume interest rate is deterministic, but the derivation logic would be the same.</p>
-<p>Diffusing with equation (34), Forward price process satisfy <strong>Fokker-Planck Equation</strong></p>
+<p>In the last session, we derive the stochstic differential equation (31) and (32) of Forward price under <strong>T-Forward measure</strong> under the condition whether interest rate process is random or deterministic. For simplicity, in this section we assume interest rate is deterministic, but the derivation logic would be the same.</p>
+<p>Diffusing with equation (32), Forward price process satisfy <strong>Fokker-Planck Equation</strong></p>
 <p>\begin{equation}
 \frac{\partial}{\partial T}\tilde{p}(t,T,x,y)= \frac{1}{2}\frac{\partial^2}{\partial y^2}\left[\sigma^2(T,y)y^2\tilde{p}(t,T,x,y)\right],
 \end{equation}</p>
@@ -12036,39 +12080,7 @@ C(t,T,x,K)=D(t,T)\tilde{\mathbb{E}}^{y} \left[ (y-K)^{+} \right] = D(t,T)\int_K^
 \Rightarrow \quad \frac{\partial C}{\partial T} = \frac{1}{2}\sigma^2(T,K)K^2\frac{\partial^2 C}{\partial K^2}.\end{equation}</p>
 
 </div>
-</div>
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[1]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">IPython.core.display</span> <span class="k">import</span> <span class="n">HTML</span>
-<span class="n">HTML</span><span class="p">(</span><span class="s2">&quot;&quot;&quot;</span>
-<span class="s2">&lt;style&gt;</span>
-<span class="s2">div {</span>
-<span class="s2">    text-align: justify;</span>
-<span class="s2">    text-justify: inter-word;</span>
-<span class="s2">}</span>
-<span class="s2">div.text_cell_render { /* Customize text cells */</span>
-<span class="s2">font-family: Georgia, &quot;Times New Roman&quot;, Times, serif;</span>
-<span class="s2">font-size: 1.1em;</span>
-<span class="s2">}</span>
-<span class="s2">&lt;/style&gt;</span>
-<span class="s2">&quot;&quot;&quot;</span><span class="p">)</span>
-</pre></div>
 
-</div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-<div class="prompt output_prompt">Out[1]:</div>
 
 
 
